@@ -1,0 +1,531 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://c4tool.com/schema/c4-model-1.0.0-alpha",
+  "type": "object",
+  "title": "C4 Model Workspace Schema",
+  "required": [
+    "workspace",
+    "model"
+  ],
+  "properties": {
+    "workspace": {
+      "$ref": "#/$defs/workspace"
+    },
+    "model": {
+      "$ref": "#/$defs/c4model"
+    },
+    "views": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/view"
+      }
+    },
+    "themes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/theme"
+      }
+    },
+    "documentation": {
+      "$ref": "#/$defs/documentation"
+    }
+  },
+  "$defs": {
+    "uri": {
+      "type": "string",
+      "title": "Uri Schema",
+      "default": "",
+      "pattern": "^(\\w+://.+)$"
+    },
+    "string-array": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "location": {
+      "type": "string",
+      "enum": [
+        "internal",
+        "external",
+        "unspecified"
+      ]
+    },
+    "workspace": {
+      "title": "Workspace definition",
+      "description": "The C4Tool workspace including the C4 model, its views, deployment and documentation.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Workspace unique id"
+        },
+        "name": {
+          "type": "string",
+          "title": "The name of the software product"
+        },
+        "description": {
+          "type": "string",
+          "title": "the description of the software product"
+        },
+        "author": {
+          "type": "string",
+          "title": "The author's name, can include an optional <email>"
+        },
+        "modified": {
+          "type": "string",
+          "title": "The date that the workspace was commited (ISO 8601 format)."
+        },
+        "references": {
+          "type": "object",
+          "title": "References to other model workspaces for relationships",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "c4model": {
+      "title": "A software architecture C4 Model",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "people",
+        "systems"
+      ],
+      "properties": {
+        "people": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/person"
+          }
+        },
+        "systems": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/system"
+          }
+        },
+        "deployment": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/environment"
+          },
+          "examples": [
+            {
+              "env-qa": {
+                "name": "QA Environment",
+                "nodes": {
+                  "qa-main-node": {
+                    "name": "Example Node",
+                    "quantity": 2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "person": {
+      "title": "C4 Model Person",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "tags": {
+          "$ref": "#/$defs/tags"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "relationships": {
+          "$ref": "#/$defs/relationships"
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        }
+      }
+    },
+    "system": {
+      "title": "C4 Model Software System",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "tags": {
+          "$ref": "#/$defs/tags"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "relationships": {
+          "$ref": "#/$defs/relationships"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        },
+        "containers": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/container"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "container": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "type": {
+          "type": "string",
+          "$comment": "example types add the same tag",
+          "examples": [
+            "web.app",
+            "web.service",
+            "service",
+            "job",
+            "standalone.gui",
+            "standalone.cli",
+            "database",
+            "library",
+            "mobile",
+            "browser",
+            "queue",
+            "topic",
+            "storage",
+            "filesystem"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "technology": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "tags": {
+          "$ref": "#/$defs/tags"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        },
+        "relationships": {
+          "title": "Container relationships",
+          "$ref": "#/$defs/relationships"
+        },
+        "components": {
+          "type": "object",
+          "title": "C4 Component",
+          "additionalProperties": {
+            "$ref": "#/$defs/component"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "title": "C4 model Component",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "technology": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "web.app",
+            "web.service",
+            "service",
+            "job",
+            "standalone.gui",
+            "standalone.cli",
+            "database",
+            "library",
+            "static.library",
+            "dynamic.library",
+            "mobile",
+            "controller",
+            "queue",
+            "topic",
+            "storage",
+            "filesystem"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "tags": {
+          "$ref": "#/$defs/tags"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        },
+        "relationships": {
+          "title": "Component relationships",
+          "$ref": "#/$defs/relationships"
+        },
+        "code": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "name",
+        "nodes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/deployment-node"
+          }
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        }
+      }
+    },
+    "deployment-node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "technology": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "quantity": {
+          "type": "number",
+          "multipleOf": 1,
+          "minimum": 1
+        },
+        "instances": {
+          "oneOf": [
+            {
+              "type": "object",
+              "title": "container or system keys for this deployment node",
+              "additionalProperties": {
+                "$ref": "#/$defs/deployment-instance"
+              }
+            },
+            {
+              "$ref": "#/$defs/string-array"
+            }
+          ]
+        },
+        "children": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/deployment-node"
+          }
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        },
+        "relationships": {
+          "title": "Deployment node relationships",
+          "$ref": "#/$defs/relationships"
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "title": "[from - ]label - to[ | technology [@TAGS]]",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?<a2>[^\\s]+)\\s+-\\s+(?<d2>.+?)\\s+-\\s+(?<b2>[^\\s]+)(?:\\s+\\|\\s+(?<t2>.+))?|(?<d1>.+?)\\s+-\\s+(?<b1>[^\\s]+)(?:\\s+\\|\\s+(?<t1>.+))?$"
+      }
+    },
+    "tags": {
+      "type": "string",
+      "title": "Comma separated values for custom tags",
+      "examples": [
+        "External",
+        "Important",
+        "Obsolete"
+      ]
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "styles": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/style"
+          }
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "pattern": "^(.*)$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        }
+      }
+    },
+    "style": {
+      "type": "object",
+      "title": "",
+      "properties": {
+        "color": {
+          "type": "string"
+        }
+      }
+    },
+    "documentation": {
+      "type": "array",
+      "title": "",
+      "items": {
+        "$ref": "#/$defs/document"
+      }
+    },
+    "document": {
+      "type": "object",
+      "title": "",
+      "required": [
+        "title",
+        "content"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "element": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "children": {
+          "$ref": "#/$defs/documentation"
+        }
+      }
+    },
+    "deployment-instance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "element": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "uri": {
+          "$ref": "#/$defs/uri"
+        },
+        "properties": {
+          "$ref": "#/$defs/extra-properties"
+        }
+      }
+    },
+    "extra-properties": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
