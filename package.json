@@ -1,0 +1,15 @@
+{
+  "name": "@c4tool/schema",
+  "version": "1.0.0-alpha",
+  "description": "C4 Model Workspace Schema for the C4 Tool in JSON format",
+  "author": "C4 Tool Team",
+  "license": "MIT",
+  "main": "c4-mode.json",
+  "scripts": {
+    "build": "ajv compile -s c4-model.json",
+    "test": "ajv validate -s c4-model.json -d examples/c4model.yaml && ajv validate -s c4-model.json -d examples/minimum.yaml"
+  },
+  "devDependencies": {
+    "ajv-cli": "^5.0.0"
+  }
+}
