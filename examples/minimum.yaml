@@ -1,0 +1,9 @@
+$schema: https://c4tool.com/schema/c4-model-1.0.0-beta1.json
+
+workspace:
+  name: Minimum
+
+model:
+  people: {}
+    
+  systems: {}
