@@ -1,0 +1,143 @@
+# WIP
+
+workspace:
+  id: c4-001
+  name: Testing Model
+  description: An example of C4 model
+  author: C4Tool <dev@c4tool.com>
+  modified: 2020-06-21T00:00
+
+model:
+  people:
+    user1:
+      name: User 1
+      description: The main user
+      location: internal
+      uri: https://example.com/user1
+      tags: External, Human #---  ORDER IN TAGS are used for display styles
+      notes: |
+        **
+      properties:
+        group: "AD-GROUP"
+      relationships:
+        - consume - mysys
+
+  systems:
+    mysys:
+      name: My System
+      description: The most important system in the universe
+      location: internal ## can be replaced by enterprise for multi-enterprise model and multi boundary
+      uri: https://example.com/system-information
+      tags: UNO,SSSS,, # !!! REGEX FOR TAGS (no tailing comma)
+      #group: <this can be included in the properties>
+      containers:
+        mysys-web:
+          name: Web Portal
+          description: =
+          technology: Angular/Typescript
+          type: web # can be named 'category' ??
+          properties:
+            stack: Angular v8
+          relationships: []
+          components:
+            mysys-web--app:
+              name: Application
+              description: The core component
+              technology: Java # TODO: add an example list of technology
+              #group: <this can be included in the properties>
+              code:
+                {}
+                # TODO: how? UML? sequence diagrams?
+              relationships:
+                - mysys-web--app - hola - mysys-web--app | TECH @TAG
+        3rd-web:
+          name: 3rd Party webservice without source-code
+          # can be used to represent elements in the deployment, like IIS, Apache Tomcat, AWS-service-API, any other API
+          # location: External # used to validate no component are required
+          type: infrastructure # << special case, used in deployment
+
+  deployment:
+    env-qa:
+      name: QA Environment
+      nodes:
+        qa-main-node:
+          name: Example Node
+          quantity: 5
+          technology: IIS
+          instances: # replace infrastructureNodes, containerInstances, softwareSystemInstances
+            qa-main-node--web:
+              element: mysys-web ## TODO: transform in
+              name: to rename
+              description: to rename
+              uri: https://ssss.sss.sss:8888/whe
+              # NO healthChecks, NOT NEEDED IN C4 MODEL
+            qa-main-node--web2:
+              element: mysys-web
+          relationships:
+            - qa-main-node--web - backups - qa-main-node--web2 | tech @ XX
+            # add relationships between containers in deployment
+            # add relationships between nodes, and between nodes and containers
+            # software system instances on deployment views.
+        qa-simple-node:
+          name: Simple
+          technology: IIS
+          instances:
+            - mysys-web  ## represent a object `qa-simple-node1: { element: mysys-web}`
+          relationships:
+            - <me> - reads - qa-main-node | HTTP  # not possible create relationship from/to element instance
+
+#$ref-themes: themes:themes  # use this instead of the element to read from other file/uri
+themes:
+  default:
+    name: Default Theme
+    styles:
+      tag1:
+        color: "#000000"
+        font: Arial
+
+#$ref-views: ws:views
+views:
+  view1:
+    title: System Context
+    description: Some important text
+    theme: default # theme-key
+    subject: mysys # this define the type of
+    elements:
+      user1: { x: 10, y: 10, styles: { color: "#FF0000" } } # inline styles
+      mysys: { x: 100, y: 100 }
+      label1: { type: label, x: 20, y: 20, text: "xxxxxxxx" }
+    relationships:
+      # TODO: REVIEW THIS !!!
+      - key: user1 - get info - mysys | HTTP
+      - key: user1 - get info - mysys | HTTP
+      - key: label1 - mysys
+        position: 0.7 # changed to %
+        vertices:
+          - { x: 25, y: 35 }
+          - { x: 50, y: 80 }
+  deployment-view:
+    title: Deployment
+    description: PROD
+    theme: default
+    subject: prod # CAN BE ANY model key (system, container, component, deployment environment, or "LANDSCAPE", "DEPLOYMENT")
+    boundary: all # system, container, all, none
+    export:
+      size: { x: 19, y: 21, units: cm, ppi: 300 } # in, px
+      offset: { x: 50, y: 100 } # use units of size
+      scale: 2.4
+    elements: # CAN BE ANY ELEMENT KEY: (system, container, component, deployment-node) according the diagram rules (not show components in system diagram)
+      qa-main-node--web: { x: 10, y: 10 }
+      qa-main-node--web1: { x: 10, y: 10 } # this is a deployment node of prod environment
+    relationships: ## relationships only are present in deployment view, not in the model.
+      - key: qa-main-node--web -- qa-main-node--web1 # replace '- -' with '--' when no text, invalid in strict
+      - key: qa-main-node--web1 --> qa-main-node--web2 # replace '-> ->' with '-->' when no text, invalid in strict
+
+documentation:
+  - title: H1
+    content: md # can include diagrams and links to other document with 'macros'
+    element: sys1
+    children:
+      - title: H2
+        content: md
+  - title: H1.2
+    content: sss
